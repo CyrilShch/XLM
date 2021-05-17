@@ -17,6 +17,10 @@ from xlm.model.memory import HashingMemory
 from xlm.trainer import SingleTrainer, EncDecTrainer
 from xlm.evaluation.evaluator import SingleEvaluator, EncDecEvaluator
 
+### ROBIN EDIT
+import warnings
+warnings.filterwarnings('ignore')
+
 
 def get_parser():
     """

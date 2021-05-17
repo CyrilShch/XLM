@@ -292,8 +292,8 @@ def check_data_params(params):
     }
     for paths in params.mono_dataset.values():
         for p in paths.values():
-            if not os.path.isfile(p):
-                logger.error(f"{p} not found")
+            if not os.path.isfile(p): #logger.error(f"{p} not found")
+                logger.error("%s not found" % p)
     assert all([all([os.path.isfile(p) for p in paths.values()]) for paths in params.mono_dataset.values()])
 
     # check parallel datasets

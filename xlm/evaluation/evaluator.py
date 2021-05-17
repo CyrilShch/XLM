@@ -208,13 +208,13 @@ class Evaluator(object):
         # generate possible targets / update x input
         _x_real = x[pred_mask]
         _x_mask = _x_real.clone().fill_(params.mask_index)
-        x = x.masked_scatter(pred_mask, _x_mask)
+        x = x.masked_scatter(pred_mask.bool(), _x_mask)  # pred_mask => pred_mask.bool()
 
         assert 0 <= x.min() <= x.max() < params.n_words
         assert x.size() == (slen, bs)
         assert pred_mask.size() == (slen, bs)
 
-        return x, _x_real, pred_mask
+        return x, _x_real, pred_mask.bool()   #pred_mask => pred_mask.bool()
 
     def run_all_evals(self, trainer):
         """
@@ -296,12 +296,12 @@ class Evaluator(object):
             y = x[1:].masked_select(pred_mask[:-1])
             assert pred_mask.sum().item() == y.size(0)
 
-            # cuda
-            x, lengths, positions, langs, pred_mask, y = to_cuda(x, lengths, positions, langs, pred_mask, y)
+            # cuda  # pred_mask => pred_mask.bool()
+            x, lengths, positions, langs, pred_mask, y = to_cuda(x, lengths, positions, langs, pred_mask.bool(), y) 
 
-            # forward / loss
+            # forward / loss  # pred_mask => pred_mask.bool()
             tensor = model('fwd', x=x, lengths=lengths, positions=positions, langs=langs, causal=True)
-            word_scores, loss = model('predict', tensor=tensor, pred_mask=pred_mask, y=y, get_scores=True)
+            word_scores, loss = model('predict', tensor=tensor, pred_mask=pred_mask.bool(), y=y, get_scores=True)
 
             # update stats
             n_words += y.size(0)
@@ -369,11 +369,11 @@ class Evaluator(object):
             x, y, pred_mask = self.mask_out(x, lengths, rng)
 
             # cuda
-            x, y, pred_mask, lengths, positions, langs = to_cuda(x, y, pred_mask, lengths, positions, langs)
+            x, y, pred_mask, lengths, positions, langs = to_cuda(x, y, pred_mask.bool(), lengths, positions, langs)
 
-            # forward / loss
+            # forward / loss  # pred_mask => pred_mask.bool()
             tensor = model('fwd', x=x, lengths=lengths, positions=positions, langs=langs, causal=False)
-            word_scores, loss = model('predict', tensor=tensor, pred_mask=pred_mask, y=y, get_scores=True)
+            word_scores, loss = model('predict', tensor=tensor, pred_mask=pred_mask.bool(), y=y, get_scores=True)
 
             # update stats
             n_words += len(y)
@@ -471,8 +471,8 @@ class EncDecEvaluator(Evaluator):
             # decode target sentence
             dec2 = decoder('fwd', x=x2, lengths=len2, langs=langs2, causal=True, src_enc=enc1, src_len=len1)
 
-            # loss
-            word_scores, loss = decoder('predict', tensor=dec2, pred_mask=pred_mask, y=y, get_scores=True)
+            # loss  # pred_mask => pred_mask.bool()
+            word_scores, loss = decoder('predict', tensor=dec2, pred_mask=pred_mask.bool(), y=y, get_scores=True)
 
             # update stats
             n_words += y.size(0)

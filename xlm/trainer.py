@@ -464,7 +464,7 @@ class Trainer(object):
         assert 0 <= x.min() <= x.max() < params.n_words
         assert x.size() == (slen, bs)
         assert pred_mask.size() == (slen, bs)
-
+        #changed pred_mask to pred_mask.bool()
         return x, _x_real, pred_mask
 
     def generate_batch(self, lang1, lang2, name):
@@ -677,12 +677,12 @@ class Trainer(object):
         y = x[1:].masked_select(pred_mask[:-1])
         assert pred_mask.sum().item() == y.size(0)
 
-        # cuda
-        x, lengths, langs, pred_mask, y = to_cuda(x, lengths, langs, pred_mask, y)
+        # cuda # Pred__mask => pred_mask.bool
+        x, lengths, langs, pred_mask, y = to_cuda(x, lengths, langs, pred_mask.bool(), y)
 
         # forward / loss
         tensor = model('fwd', x=x, lengths=lengths, langs=langs, causal=True)
-        _, loss = model('predict', tensor=tensor, pred_mask=pred_mask, y=y, get_scores=False)
+        _, loss = model('predict', tensor=tensor, pred_mask=pred_mask.bool(), y=y, get_scores=False)
         self.stats[('CLM-%s' % lang1) if lang2 is None else ('CLM-%s-%s' % (lang1, lang2))].append(loss.item())
         loss = lambda_coeff * loss
 
@@ -712,8 +712,8 @@ class Trainer(object):
         x, lengths, positions, langs, _ = self.round_batch(x, lengths, positions, langs)
         x, y, pred_mask = self.mask_out(x, lengths)
 
-        # cuda
-        x, y, pred_mask, lengths, positions, langs = to_cuda(x, y, pred_mask, lengths, positions, langs)
+        # cuda  # pred_mask => pred_mask.bool()
+        x, y, pred_mask, lengths, positions, langs = to_cuda(x, y, pred_mask.bool(), lengths, positions, langs)
 
         # forward / loss
         tensor = model('fwd', x=x, lengths=lengths, positions=positions, langs=langs, causal=False)
@@ -854,8 +854,8 @@ class EncDecTrainer(Trainer):
         # decode target sentence
         dec2 = self.decoder('fwd', x=x2, lengths=len2, langs=langs2, causal=True, src_enc=enc1, src_len=len1)
 
-        # loss
-        _, loss = self.decoder('predict', tensor=dec2, pred_mask=pred_mask, y=y, get_scores=False)
+        # loss  # pred_mask => pred_mask.bool()
+        _, loss = self.decoder('predict', tensor=dec2, pred_mask=pred_mask.bool(), y=y, get_scores=False)
         self.stats[('AE-%s' % lang1) if lang1 == lang2 else ('MT-%s-%s' % (lang1, lang2))].append(loss.item())
         loss = lambda_coeff * loss
 
@@ -921,8 +921,8 @@ class EncDecTrainer(Trainer):
         # decode original sentence
         dec3 = self.decoder('fwd', x=x1, lengths=len1, langs=langs1, causal=True, src_enc=enc2, src_len=len2)
 
-        # loss
-        _, loss = self.decoder('predict', tensor=dec3, pred_mask=pred_mask, y=y1, get_scores=False)
+        # loss  # pred_mask => pred_mask.bool()
+        _, loss = self.decoder('predict', tensor=dec3, pred_mask=pred_mask.bool(), y=y1, get_scores=False)
         self.stats[('BT-%s-%s-%s' % (lang1, lang2, lang3))].append(loss.item())
         loss = lambda_coeff * loss
 

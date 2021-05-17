@@ -59,13 +59,18 @@ if [ "$RELOAD_CODES" == "" -a "$RELOAD_VOCAB" != "" -o "$RELOAD_CODES" != "" -a 
 # Initialize tools and data paths
 #
 
+NPTH=/content/drive/My\Drive/facebook_XLM/XLM 
+
 # main paths
-MAIN_PATH=$PWD
-TOOLS_PATH=$PWD/tools
-DATA_PATH=$PWD/data
+MAIN_PATH=$NPTH
+TOOLS_PATH=$NPTH/tools
+DATA_PATH=$NPTH/data
 MONO_PATH=$DATA_PATH/mono
 PARA_PATH=$DATA_PATH/para
 PROC_PATH=$DATA_PATH/processed/$SRC-$TGT
+
+
+
 
 # create paths
 mkdir -p $TOOLS_PATH
@@ -189,8 +194,8 @@ if [ "$SRC" == "fr" -o "$TGT" == "fr" ]; then
   mkdir -p $MONO_PATH/fr
   cd $MONO_PATH/fr
   wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2007.fr.shuffled.gz
-  wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2008.fr.shuffled.gz
-  wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2009.fr.shuffled.gz
+  #wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2008.fr.shuffled.gz
+  #wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2009.fr.shuffled.gz
   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2010.fr.shuffled.gz
   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2011.fr.shuffled.gz
   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2012.fr.shuffled.gz
@@ -330,10 +335,10 @@ echo "$TGT binarized data in: $TGT_TRAIN_BPE.pth"
 
 cd $PARA_PATH
 
-echo "Downloading parallel data..."
+#echo "Downloading parallel data..."
 wget -c http://data.statmt.org/wmt18/translation-task/dev.tgz
 
-echo "Extracting parallel data..."
+#echo "Extracting parallel data..."
 tar -xzf dev.tgz
 
 # check valid and test files are here
@@ -385,6 +390,7 @@ echo "    $TGT: $TGT_VALID_BPE.pth"
 echo "Monolingual test data:"
 echo "    $SRC: $SRC_TEST_BPE.pth"
 echo "    $TGT: $TGT_TEST_BPE.pth"
+
 echo "Parallel validation data:"
 echo "    $SRC: $PARA_SRC_VALID_BPE.pth"
 echo "    $TGT: $PARA_TGT_VALID_BPE.pth"
@@ -392,3 +398,4 @@ echo "Parallel test data:"
 echo "    $SRC: $PARA_SRC_TEST_BPE.pth"
 echo "    $TGT: $PARA_TGT_TEST_BPE.pth"
 echo ""
+
