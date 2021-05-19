@@ -46,8 +46,8 @@ set -- "${POSITIONAL[@]}"
 #
 if [ "$SRC" == "" ]; then echo "--src not provided"; exit; fi
 if [ "$TGT" == "" ]; then echo "--tgt not provided"; exit; fi
-if [ "$SRC" != "de" -a "$SRC" != "en" -a "$SRC" != "du" -a "$SRC" != "li"]; then echo "unknown source language"; exit; fi
-if [ "$TGT" != "de" -a "$TGT" != "en" -a "$TGT" != "du" -a "$TGT" != "li"]; then echo "unknown target language"; exit; fi
+if [ "$SRC" != "de" -a "$SRC" != "en" -a "$SRC" != "fr" -a "$SRC" != "ro" ]; then echo "unknown source language"; exit; fi
+if [ "$TGT" != "de" -a "$TGT" != "en" -a "$TGT" != "fr" -a "$TGT" != "ro" ]; then echo "unknown target language"; exit; fi
 if [ "$SRC" == "$TGT" ]; then echo "source and target cannot be identical"; exit; fi
 if [ "$SRC" \> "$TGT" ]; then echo "please ensure SRC < TGT"; exit; fi
 if [ "$RELOAD_CODES" != "" ] && [ ! -f "$RELOAD_CODES" ]; then echo "cannot locate BPE codes"; exit; fi
@@ -59,18 +59,13 @@ if [ "$RELOAD_CODES" == "" -a "$RELOAD_VOCAB" != "" -o "$RELOAD_CODES" != "" -a 
 # Initialize tools and data paths
 #
 
-NPTH=/content/drive/My\Drive/facebook_XLM/XLM 
-
 # main paths
-MAIN_PATH=$NPTH
-TOOLS_PATH=$NPTH/tools
-DATA_PATH=$NPTH/data
+MAIN_PATH=$PWD
+TOOLS_PATH=$PWD/tools
+DATA_PATH=$PWD/data
 MONO_PATH=$DATA_PATH/mono
 PARA_PATH=$DATA_PATH/para
 PROC_PATH=$DATA_PATH/processed/$SRC-$TGT
-
-
-
 
 # create paths
 mkdir -p $TOOLS_PATH
@@ -90,6 +85,11 @@ INPUT_FROM_SGM=$MOSES/scripts/ems/support/input-from-sgm.perl
 # fastBPE
 FASTBPE_DIR=$TOOLS_PATH/fastBPE
 FASTBPE=$TOOLS_PATH/fastBPE/fast
+
+# Sennrich's WMT16 scripts for Romanian preprocessing
+WMT16_SCRIPTS=$TOOLS_PATH/wmt16-scripts
+NORMALIZE_ROMANIAN=$WMT16_SCRIPTS/preprocess/normalise-romanian.py
+REMOVE_DIACRITICS=$WMT16_SCRIPTS/preprocess/remove-diacritics.py
 
 # raw and tokenized files
 SRC_RAW=$MONO_PATH/$SRC/all.$SRC
@@ -130,8 +130,15 @@ if [ "$SRC" == "de" -a "$TGT" == "en" ]; then
   PARA_TGT_VALID=$PARA_PATH/dev/newstest2013-ref.en
   PARA_SRC_TEST=$PARA_PATH/dev/newstest2016-ende-ref.de
   PARA_TGT_TEST=$PARA_PATH/dev/newstest2016-deen-ref.en
+  # PARA_SRC_TEST=$PARA_PATH/dev/newstest2014-deen-ref.de
+  # PARA_TGT_TEST=$PARA_PATH/dev/newstest2014-deen-ref.en
 fi
-
+if [ "$SRC" == "en" -a "$TGT" == "ro" ]; then
+  PARA_SRC_VALID=$PARA_PATH/dev/newsdev2016-roen-ref.en
+  PARA_TGT_VALID=$PARA_PATH/dev/newsdev2016-enro-ref.ro
+  PARA_SRC_TEST=$PARA_PATH/dev/newstest2016-roen-ref.en
+  PARA_TGT_TEST=$PARA_PATH/dev/newstest2016-enro-ref.ro
+fi
 
 # install tools
 ./install-tools.sh
@@ -145,53 +152,47 @@ cd $MONO_PATH
 
 if [ "$SRC" == "de" -o "$TGT" == "de" ]; then
   echo "Downloading German monolingual data ..."
-  mkdir -p $MONO_PATH/du
-  cd $MONO_PATH/du
+  mkdir -p $MONO_PATH/de
+  cd $MONO_PATH/de
   wget -c https://www.dropbox.com/s/vdlz0to60t1qarv/corpus.dutch_train1.gz
   wget -c https://www.dropbox.com/s/1uc5fr4lkunse6a/corpus.dutch_train2.gz
 fi
 
 if [ "$SRC" == "en" -o "$TGT" == "en" ]; then
   echo "Downloading English monolingual data ..."
-  mkdir -p $MONO_PATH/li
-  cd $MONO_PATH/li
+  mkdir -p $MONO_PATH/en
+  cd $MONO_PATH/en
   wget -c https://www.dropbox.com/s/5l0i8o4u6qs984n/corpus.limburgish_train1.gz
   wget -c https://www.dropbox.com/s/s5qnbv90199bc9h/corpus.limburgish_train2.gz
 fi
 
-# if [ "$SRC" == "de" -o "$TGT" == "de" ]; then
-#   echo "Download- and folder-creation deactivated, please remove comments if new download required"
-#   if [ ! -d "$MONO_PATH/de" ]; then
-#     echo "$MONO_PATH/de missing - exiting script => CHECK HERE!";
-# 	exit;
-#   fi
-#   # echo "Downloading German monolingual data ..."
-#   # mkdir -p $MONO_PATH/de
-#   # cd $MONO_PATH/de
-#   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2007.de.shuffled.gz
-#   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2008.de.shuffled.gz
-# fi
+if [ "$SRC" == "fr" -o "$TGT" == "fr" ]; then
+  echo "Downloading French monolingual data ..."
+  mkdir -p $MONO_PATH/fr
+  cd $MONO_PATH/fr
+  wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2007.fr.shuffled.gz
+  wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2008.fr.shuffled.gz
+  wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2009.fr.shuffled.gz
+  # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2010.fr.shuffled.gz
+  # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2011.fr.shuffled.gz
+  # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2012.fr.shuffled.gz
+  # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2013.fr.shuffled.gz
+  # wget -c http://www.statmt.org/wmt15/training-monolingual-news-crawl-v2/news.2014.fr.shuffled.v2.gz
+  # wget -c http://data.statmt.org/wmt17/translation-task/news.2015.fr.shuffled.gz
+  # wget -c http://data.statmt.org/wmt17/translation-task/news.2016.fr.shuffled.gz
+  # wget -c http://data.statmt.org/wmt17/translation-task/news.2017.fr.shuffled.gz
+fi
 
-# if [ "$SRC" == "en" -o "$TGT" == "en" ]; then
-#   echo "Download- and folder-creation deactivated, please remove comments if new download required"
-#   if [ ! -d "$MONO_PATH/en" ]; then
-#     echo "$MONO_PATH/en missing - exiting script => CHECK HERE!"
-# 	exit
-#   fi
-#   # echo "Downloading English monolingual data ..."
-#   # mkdir -p $MONO_PATH/en
-#   # cd $MONO_PATH/en
-#   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2007.en.shuffled.gz
-#   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2008.en.shuffled.gz
-# fi
+if [ "$SRC" == "ro" -o "$TGT" == "ro" ]; then
+  echo "Downloading Romanian monolingual data ..."
+  mkdir -p $MONO_PATH/ro
+  cd $MONO_PATH/ro
+  wget -c http://data.statmt.org/wmt16/translation-task/news.2015.ro.shuffled.gz
+fi
 
 cd $MONO_PATH
 
-
-
-# if [ ["$SRC" == "du" -a "$TGT" == "li"] -o ["$SRC" == "li" -a "$TGT" == "du"] ]; then
-#   echo "Decompression performed for Dutch and limburgish only - if new gz files downlaoded for other languages please remove if-clause above"
-  # decompress monolingual data
+# decompress monolingual data
 for FILENAME in $SRC/corpus*gz $TGT/corpus*gz; do
    echo "processing ${FILENAME::-3} ..."
    OUTPUT="${FILENAME::-3}"
@@ -202,7 +203,6 @@ for FILENAME in $SRC/corpus*gz $TGT/corpus*gz; do
       echo "$OUTPUT already decompressed."
    fi
 done
-# fi
 
 # concatenate monolingual data files
 if ! [[ -f "$SRC_RAW" ]]; then
@@ -221,9 +221,16 @@ echo "$TGT monolingual data concatenated in: $TGT_RAW"
 # if ! [[ "$(wc -l < $TGT_RAW)" -eq "$N_MONO" ]]; then echo "ERROR: Number of lines does not match! Be sure you have $N_MONO sentences in your $TGT monolingual data."; exit; fi
 
 # preprocessing commands - special case for Romanian
-SRC_PREPROCESSING="$REPLACE_UNICODE_PUNCT | $NORM_PUNC -l $SRC | $REM_NON_PRINT_CHAR |                                            $TOKENIZER -l $SRC -no-escape -threads $N_THREADS"
-TGT_PREPROCESSING="$REPLACE_UNICODE_PUNCT | $NORM_PUNC -l $TGT | $REM_NON_PRINT_CHAR |                                            $TOKENIZER -l $TGT -no-escape -threads $N_THREADS"
-
+if [ "$SRC" == "ro" ]; then
+  SRC_PREPROCESSING="$REPLACE_UNICODE_PUNCT | $NORM_PUNC -l $SRC | $REM_NON_PRINT_CHAR | $NORMALIZE_ROMANIAN | $REMOVE_DIACRITICS | $TOKENIZER -l $SRC -no-escape -threads $N_THREADS"
+else
+  SRC_PREPROCESSING="$REPLACE_UNICODE_PUNCT | $NORM_PUNC -l $SRC | $REM_NON_PRINT_CHAR |                                            $TOKENIZER -l $SRC -no-escape -threads $N_THREADS"
+fi
+if [ "$TGT" == "ro" ]; then
+  TGT_PREPROCESSING="$REPLACE_UNICODE_PUNCT | $NORM_PUNC -l $TGT | $REM_NON_PRINT_CHAR | $NORMALIZE_ROMANIAN | $REMOVE_DIACRITICS | $TOKENIZER -l $TGT -no-escape -threads $N_THREADS"
+else
+  TGT_PREPROCESSING="$REPLACE_UNICODE_PUNCT | $NORM_PUNC -l $TGT | $REM_NON_PRINT_CHAR |                                            $TOKENIZER -l $TGT -no-escape -threads $N_THREADS"
+fi
 
 # tokenize data
 if ! [[ -f "$SRC_TOK" ]]; then
@@ -306,13 +313,11 @@ echo "$TGT binarized data in: $TGT_TRAIN_BPE.pth"
 
 cd $PARA_PATH
 
-#echo "Downloading parallel data..."
-echo "Donload of parrallel data for XLM standard languages deactivated. For Dutch and Limburgish - add test-files HERE!"
-echo "Also change .sgm file reference below such taht the new test files can actually be used"
-#wget -c http://data.statmt.org/wmt18/translation-task/dev.tgz
+echo "Downloading parallel data..."
+wget -c http://data.statmt.org/wmt18/translation-task/dev.tgz
 
-#echo "Extracting parallel data..."
-# tar -xzf dev.tgz
+echo "Extracting parallel data..."
+tar -xzf dev.tgz
 
 # check valid and test files are here
 if ! [[ -f "$PARA_SRC_VALID.sgm" ]]; then echo "$PARA_SRC_VALID.sgm is not found!"; exit; fi
@@ -363,7 +368,6 @@ echo "    $TGT: $TGT_VALID_BPE.pth"
 echo "Monolingual test data:"
 echo "    $SRC: $SRC_TEST_BPE.pth"
 echo "    $TGT: $TGT_TEST_BPE.pth"
-
 echo "Parallel validation data:"
 echo "    $SRC: $PARA_SRC_VALID_BPE.pth"
 echo "    $TGT: $PARA_TGT_VALID_BPE.pth"
@@ -371,4 +375,3 @@ echo "Parallel test data:"
 echo "    $SRC: $PARA_SRC_TEST_BPE.pth"
 echo "    $TGT: $PARA_TGT_TEST_BPE.pth"
 echo ""
-
