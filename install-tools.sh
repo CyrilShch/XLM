@@ -7,13 +7,11 @@
 
 set -e
 
-NPTH=/content/drive/My\Drive/facebook_XLM/XLM 
-
 lg=$1  # input language
 
 # data path
-MAIN_PATH=$NPTH
-TOOLS_PATH=$NPTH/tools
+MAIN_PATH=$PWD
+TOOLS_PATH=$PWD/tools
 
 # tools
 MOSES_DIR=$TOOLS_PATH/mosesdecoder
