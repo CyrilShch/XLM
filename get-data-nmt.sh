@@ -143,7 +143,7 @@ fi
 
 cd $MONO_PATH
 
-if [ "$SRC" == "du" -o "$TGT" == "du" ]; then
+if [ "$SRC" == "de" -o "$TGT" == "de" ]; then
   echo "Downloading German monolingual data ..."
   mkdir -p $MONO_PATH/du
   cd $MONO_PATH/du
@@ -151,7 +151,7 @@ if [ "$SRC" == "du" -o "$TGT" == "du" ]; then
   wget -c https://www.dropbox.com/s/1uc5fr4lkunse6a/corpus.dutch_train2.gz
 fi
 
-if [ "$SRC" == "li" -o "$TGT" == "li" ]; then
+if [ "$SRC" == "en" -o "$TGT" == "en" ]; then
   echo "Downloading English monolingual data ..."
   mkdir -p $MONO_PATH/li
   cd $MONO_PATH/li
@@ -159,31 +159,31 @@ if [ "$SRC" == "li" -o "$TGT" == "li" ]; then
   wget -c https://www.dropbox.com/s/s5qnbv90199bc9h/corpus.limburgish_train2.gz
 fi
 
-if [ "$SRC" == "de" -o "$TGT" == "de" ]; then
-  echo "Download- and folder-creation deactivated, please remove comments if new download required"
-  if [ ! -d "$MONO_PATH/de" ]; then
-    echo "$MONO_PATH/de missing - exiting script => CHECK HERE!";
-	exit;
-  fi
-  # echo "Downloading German monolingual data ..."
-  # mkdir -p $MONO_PATH/de
-  # cd $MONO_PATH/de
-  # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2007.de.shuffled.gz
-  # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2008.de.shuffled.gz
-fi
+# if [ "$SRC" == "de" -o "$TGT" == "de" ]; then
+#   echo "Download- and folder-creation deactivated, please remove comments if new download required"
+#   if [ ! -d "$MONO_PATH/de" ]; then
+#     echo "$MONO_PATH/de missing - exiting script => CHECK HERE!";
+# 	exit;
+#   fi
+#   # echo "Downloading German monolingual data ..."
+#   # mkdir -p $MONO_PATH/de
+#   # cd $MONO_PATH/de
+#   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2007.de.shuffled.gz
+#   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2008.de.shuffled.gz
+# fi
 
-if [ "$SRC" == "en" -o "$TGT" == "en" ]; then
-  echo "Download- and folder-creation deactivated, please remove comments if new download required"
-  if [ ! -d "$MONO_PATH/en" ]; then
-    echo "$MONO_PATH/en missing - exiting script => CHECK HERE!"
-	exit
-  fi
-  # echo "Downloading English monolingual data ..."
-  # mkdir -p $MONO_PATH/en
-  # cd $MONO_PATH/en
-  # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2007.en.shuffled.gz
-  # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2008.en.shuffled.gz
-fi
+# if [ "$SRC" == "en" -o "$TGT" == "en" ]; then
+#   echo "Download- and folder-creation deactivated, please remove comments if new download required"
+#   if [ ! -d "$MONO_PATH/en" ]; then
+#     echo "$MONO_PATH/en missing - exiting script => CHECK HERE!"
+# 	exit
+#   fi
+#   # echo "Downloading English monolingual data ..."
+#   # mkdir -p $MONO_PATH/en
+#   # cd $MONO_PATH/en
+#   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2007.en.shuffled.gz
+#   # wget -c http://www.statmt.org/wmt14/training-monolingual-news-crawl/news.2008.en.shuffled.gz
+# fi
 
 cd $MONO_PATH
 
