@@ -189,20 +189,20 @@ cd $MONO_PATH
 
 
 
-if [ ["$SRC" == "du" -a "$TGT" == "li"] -o ["$SRC" == "li" -a "$TGT" == "du"] ]; then
-  echo "Decompression performed for Dutch and limburgish only - if new gz files downlaoded for other languages please remove if-clause above"
+# if [ ["$SRC" == "du" -a "$TGT" == "li"] -o ["$SRC" == "li" -a "$TGT" == "du"] ]; then
+#   echo "Decompression performed for Dutch and limburgish only - if new gz files downlaoded for other languages please remove if-clause above"
   # decompress monolingual data
-  for FILENAME in $SRC/corpus*gz $TGT/corpus*gz; do
-    echo "processing ${FILENAME::-3} ..."
-    OUTPUT="${FILENAME::-3}"
-    if [ ! -f "$OUTPUT" ]; then
+for FILENAME in $SRC/corpus*gz $TGT/corpus*gz; do
+   echo "processing ${FILENAME::-3} ..."
+   OUTPUT="${FILENAME::-3}"
+   if [ ! -f "$OUTPUT" ]; then
       echo "Decompressing $FILENAME..."
       gunzip -k $FILENAME
-    else
+   else
       echo "$OUTPUT already decompressed."
-    fi
-  done
-fi
+   fi
+done
+# fi
 
 # concatenate monolingual data files
 if ! [[ -f "$SRC_RAW" ]]; then
