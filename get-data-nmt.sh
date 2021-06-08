@@ -65,6 +65,7 @@ TOOLS_PATH=$PWD/tools
 DATA_PATH=$PWD/data
 MONO_PATH=$DATA_PATH/mono
 PARA_PATH=$DATA_PATH/para
+DEV_PATH=$PARA_PATH/dev
 PROC_PATH=$DATA_PATH/processed/$SRC-$TGT
 
 # create paths
@@ -73,6 +74,8 @@ mkdir -p $DATA_PATH
 mkdir -p $MONO_PATH
 mkdir -p $PARA_PATH
 mkdir -p $PROC_PATH
+mkdir -p $DEV_PATH
+
 
 # moses
 MOSES=$TOOLS_PATH/mosesdecoder
@@ -126,12 +129,10 @@ if [ "$SRC" == "en" -a "$TGT" == "fr" ]; then
   PARA_TGT_TEST=$PARA_PATH/dev/newstest2014-fren-ref.fr
 fi
 if [ "$SRC" == "de" -a "$TGT" == "en" ]; then
-  PARA_SRC_VALID=$PARA_PATH/dev/newstest2013-ref.de
-  PARA_TGT_VALID=$PARA_PATH/dev/newstest2013-ref.en
-  PARA_SRC_TEST=$PARA_PATH/dev/newstest2016-ende-ref.de
-  PARA_TGT_TEST=$PARA_PATH/dev/newstest2016-deen-ref.en
-  # PARA_SRC_TEST=$PARA_PATH/dev/newstest2014-deen-ref.de
-  # PARA_TGT_TEST=$PARA_PATH/dev/newstest2014-deen-ref.en
+  PARA_SRC_VALID=$PARA_PATH/dev/Data_Dutch_val_v1
+  PARA_TGT_VALID=$PARA_PATH/dev/Data_Limburgish_val_v1
+  PARA_SRC_TEST=$PARA_PATH/dev/Data_Dutch_Test_v1
+  PARA_TGT_TEST=$PARA_PATH/dev/Data_Limburgish_Test_v1
 fi
 if [ "$SRC" == "en" -a "$TGT" == "ro" ]; then
   PARA_SRC_VALID=$PARA_PATH/dev/newsdev2016-roen-ref.en
@@ -314,22 +315,23 @@ echo "$TGT binarized data in: $TGT_TRAIN_BPE.pth"
 cd $PARA_PATH
 
 echo "Downloading parallel data..."
-wget -c http://data.statmt.org/wmt18/translation-task/dev.tgz
+wget -c https://www.dropbox.com/s/71zqk9999pen5f6/dev.tar.gz
+
 
 echo "Extracting parallel data..."
-tar -xzf dev.tgz
+tar -xzf dev.tar.gz -C $DEV_PATH/
 
 # check valid and test files are here
-if ! [[ -f "$PARA_SRC_VALID.sgm" ]]; then echo "$PARA_SRC_VALID.sgm is not found!"; exit; fi
-if ! [[ -f "$PARA_TGT_VALID.sgm" ]]; then echo "$PARA_TGT_VALID.sgm is not found!"; exit; fi
-if ! [[ -f "$PARA_SRC_TEST.sgm" ]];  then echo "$PARA_SRC_TEST.sgm is not found!";  exit; fi
-if ! [[ -f "$PARA_TGT_TEST.sgm" ]];  then echo "$PARA_TGT_TEST.sgm is not found!";  exit; fi
+if ! [[ -f "$PARA_SRC_VALID" ]]; then echo "$PARA_SRC_VALID is not found!"; exit; fi
+if ! [[ -f "$PARA_TGT_VALID" ]]; then echo "$PARA_TGT_VALID is not found!"; exit; fi
+if ! [[ -f "$PARA_SRC_TEST" ]];  then echo "$PARA_SRC_TEST is not found!";  exit; fi
+if ! [[ -f "$PARA_TGT_TEST" ]];  then echo "$PARA_TGT_TEST is not found!";  exit; fi
 
 echo "Tokenizing valid and test data..."
-eval "$INPUT_FROM_SGM < $PARA_SRC_VALID.sgm | $SRC_PREPROCESSING > $PARA_SRC_VALID"
-eval "$INPUT_FROM_SGM < $PARA_TGT_VALID.sgm | $TGT_PREPROCESSING > $PARA_TGT_VALID"
-eval "$INPUT_FROM_SGM < $PARA_SRC_TEST.sgm  | $SRC_PREPROCESSING > $PARA_SRC_TEST"
-eval "$INPUT_FROM_SGM < $PARA_TGT_TEST.sgm  | $TGT_PREPROCESSING > $PARA_TGT_TEST"
+eval "cat $PARA_SRC_VALID | $SRC_PREPROCESSING > $PARA_SRC_VALID"
+eval "cat $PARA_TGT_VALID | $TGT_PREPROCESSING > $PARA_TGT_VALID"
+eval "cat $PARA_SRC_TEST | $SRC_PREPROCESSING > $PARA_SRC_TEST"
+eval "cat $PARA_TGT_TEST | $TGT_PREPROCESSING > $PARA_TGT_TEST"
 
 echo "Applying BPE to valid and test files..."
 $FASTBPE applybpe $PARA_SRC_VALID_BPE $PARA_SRC_VALID $BPE_CODES $SRC_VOCAB
