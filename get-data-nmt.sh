@@ -328,10 +328,10 @@ if ! [[ -f "$PARA_SRC_TEST" ]];  then echo "$PARA_SRC_TEST is not found!";  exit
 if ! [[ -f "$PARA_TGT_TEST" ]];  then echo "$PARA_TGT_TEST is not found!";  exit; fi
 
 echo "Tokenizing valid and test data..."
-eval "$SRC_PREPROCESSING > $PARA_SRC_VALID"
-eval "$TGT_PREPROCESSING > $PARA_TGT_VALID"
-eval "$SRC_PREPROCESSING > $PARA_SRC_TEST"
-eval "$TGT_PREPROCESSING > $PARA_TGT_TEST"
+eval "cat $PARA_SRC_VALID | $SRC_PREPROCESSING > $PARA_SRC_VALID"
+eval "cat $PARA_TGT_VALID | $TGT_PREPROCESSING > $PARA_TGT_VALID"
+eval "cat $PARA_SRC_TEST | $SRC_PREPROCESSING > $PARA_SRC_TEST"
+eval "cat $PARA_TGT_TEST | $TGT_PREPROCESSING > $PARA_TGT_TEST"
 
 echo "Applying BPE to valid and test files..."
 $FASTBPE applybpe $PARA_SRC_VALID_BPE $PARA_SRC_VALID $BPE_CODES $SRC_VOCAB
