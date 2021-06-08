@@ -315,11 +315,11 @@ echo "$TGT binarized data in: $TGT_TRAIN_BPE.pth"
 cd $PARA_PATH
 
 echo "Downloading parallel data..."
-wget -c https://www.dropbox.com/s/71zqk9999pen5f6/dev.tar.gz
+wget -c https://www.dropbox.com/s/too68n07335f0iu/dev.tar
 
 
 echo "Extracting parallel data..."
-tar -xzf dev.tar.gz -C $DEV_PATH/
+tar -xvf dev.tar -C $DEV_PATH/
 
 # check valid and test files are here
 if ! [[ -f "$PARA_SRC_VALID" ]]; then echo "$PARA_SRC_VALID is not found!"; exit; fi
