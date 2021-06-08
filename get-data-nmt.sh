@@ -129,10 +129,10 @@ if [ "$SRC" == "en" -a "$TGT" == "fr" ]; then
   PARA_TGT_TEST=$PARA_PATH/dev/newstest2014-fren-ref.fr
 fi
 if [ "$SRC" == "de" -a "$TGT" == "en" ]; then
-  PARA_SRC_VALID=$PARA_PATH/dev/Data_Dutch_val_v2
-  PARA_TGT_VALID=$PARA_PATH/dev/Data_Limburgish_val_v2
-  PARA_SRC_TEST=$PARA_PATH/dev/Data_Dutch_Test_v2
-  PARA_TGT_TEST=$PARA_PATH/dev/Data_Limburgish_Test_v2
+  PARA_SRC_VALID=$PARA_PATH/dev/Data_Dutch_val_v2.txt
+  PARA_TGT_VALID=$PARA_PATH/dev/Data_Limburgish_val_v2.txt
+  PARA_SRC_TEST=$PARA_PATH/dev/Data_Dutch_Test_v2.txt
+  PARA_TGT_TEST=$PARA_PATH/dev/Data_Limburgish_Test_v2.txt
 fi
 if [ "$SRC" == "en" -a "$TGT" == "ro" ]; then
   PARA_SRC_VALID=$PARA_PATH/dev/newsdev2016-roen-ref.en
@@ -319,7 +319,7 @@ wget -c https://www.dropbox.com/s/bbnhn23xfbrfzo7/dev.tar
 
 
 echo "Extracting parallel data..."
-tar -xvf dev.tar -C $DEV_PATH/
+tar -xvf dev.tar
 
 # check valid and test files are here
 if ! [[ -f "$PARA_SRC_VALID" ]]; then echo "$PARA_SRC_VALID is not found!"; exit; fi
