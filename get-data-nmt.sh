@@ -130,9 +130,9 @@ if [ "$SRC" == "en" -a "$TGT" == "fr" ]; then
 fi
 if [ "$SRC" == "de" -a "$TGT" == "en" ]; then
   PARA_SRC_VALID=$PARA_PATH/dev/Data_Dutch_val_v4.txt
-  PARA_TGT_VALID=$PARA_PATH/dev/Data_Limburgish_val_v4.txt
+  PARA_TGT_VALID=$PARA_PATH/dev/Data_Limburgisсh_val_v4.txt
   PARA_SRC_TEST=$PARA_PATH/dev/Data_Dutch_Test_v4.txt
-  PARA_TGT_TEST=$PARA_PATH/dev/Data_Limburgish_Test_v4.txt
+  PARA_TGT_TEST=$PARA_PATH/dev/Data_Limburgisсh_Test_v4.txt
 fi
 if [ "$SRC" == "en" -a "$TGT" == "ro" ]; then
   PARA_SRC_VALID=$PARA_PATH/dev/newsdev2016-roen-ref.en
