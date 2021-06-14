@@ -321,7 +321,7 @@ echo "$TGT binarized data in: $TGT_TRAIN_BPE.pth"
 cd $PARA_PATH
 
 echo "Downloading parallel data..."
-wget -c https://www.dropbox.com/s/roqviwt77plf0c8/dev.tar
+wget -c https://www.dropbox.com/s/7bgserypq8wu0pq/dev.tar
 
 
 echo "Extracting parallel data..."
