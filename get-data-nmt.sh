@@ -130,7 +130,7 @@ if [ "$SRC" == "en" -a "$TGT" == "fr" ]; then
 fi
 if [ "$SRC" == "de" -a "$TGT" == "en" ]; then
   PARA_SRC_VALID=$PARA_PATH/Data_Dutch_val_v4.txt
-  PARA_TGT_VALID=$PARA_PATH/Data_Limburgish_val_v5.txt
+  PARA_TGT_VALID=$PARA_PATH/Data_Limburgish_val_v6.txt
   PARA_SRC_TEST=$PARA_PATH/Data_Dutch_Test_v4.txt
   PARA_TGT_TEST=$PARA_PATH/Data_Limburgisch_Test_v4.txt
 fi
@@ -321,7 +321,7 @@ echo "$TGT binarized data in: $TGT_TRAIN_BPE.pth"
 cd $PARA_PATH
 
 echo "Downloading parallel data..."
-wget -c https://www.dropbox.com/s/7bgserypq8wu0pq/dev.tar
+wget -c https://www.dropbox.com/s/aq05pl09hmzc4ih/dev.tar
 
 
 echo "Extracting parallel data..."
