@@ -160,11 +160,11 @@ if [ "$SRC" == "de" -o "$TGT" == "de" ]; then
   echo "Downloading German monolingual data ..."
   mkdir -p $MONO_PATH/de
   cd $MONO_PATH/de
-  wget -c https://www.dropbox.com/s/61pigchzp3e5z3m/corpus.dutch_train1.gz
-  wget -c https://www.dropbox.com/s/p8l61xr3cbto9oh/corpus.dutch_train2.gz
+#   wget -c https://www.dropbox.com/s/61pigchzp3e5z3m/corpus.dutch_train1.gz
+#   wget -c https://www.dropbox.com/s/p8l61xr3cbto9oh/corpus.dutch_train2.gz
   
-#   wget -c https://www.dropbox.com/s/wm7a0rxsqofkp9i/corpus.dutch_train1_matched.gz
-#   wget -c https://www.dropbox.com/s/wm7a0rxsqofkp9i/corpus.dutch_train2_matched.gz
+  wget -c https://www.dropbox.com/s/wm7a0rxsqofkp9i/corpus.dutch_train1_matched.gz
+  wget -c https://www.dropbox.com/s/wm7a0rxsqofkp9i/corpus.dutch_train2_matched.gz
   
   
 fi
