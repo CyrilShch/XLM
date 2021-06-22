@@ -136,7 +136,7 @@ if [ "$SRC" == "de" -a "$TGT" == "en" ]; then
 
   PARA_SRC_VALID=$PARA_PATH/Data_Dutch_val_long_v4.txt
   PARA_TGT_VALID=$PARA_PATH/Data_Limburgish_val_long_v6.txt
-  PARA_SRC_TEST=$PARA_PATH/Data_Dutch_Test_v5.txt
+  PARA_SRC_TEST=$PARA_PATH/Data_Dutch_Test_long_v4.txt
   PARA_TGT_TEST=$PARA_PATH/Data_Limburgisch_Test_long_v4.txt
 fi
 if [ "$SRC" == "en" -a "$TGT" == "ro" ]; then
